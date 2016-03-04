@@ -1,0 +1,35 @@
+#!/bin/sh /etc/rc.common
+START=99
+
+run_sdu_net()
+{
+    local enable
+    config_get_bool enable $1 enable
+    
+    if [ $enable ]; then
+        local username
+        local password
+        
+        config_get username $1 username
+        config_get password $1 password
+
+        sed -e "s/_username_/$username/" /etc/config/sdu.conf.template > /etc/config/sdu.conf.tmp
+        sed -e "s/_password_/$password/" /etc/config/sdu.conf.tmp > /etc/config/sdu.conf
+
+        wpa_supplicant -D wired -i eth0 -c /etc/config/sdu.conf &
+        
+        echo "SDU Network has started."
+    fi
+}
+
+start()
+{
+    config_load sdunet
+    config_foreach run_sdu_net login
+}
+
+stop()
+{
+    wpa_cli terminate
+    echo "SDU Network has stoped."
+}
