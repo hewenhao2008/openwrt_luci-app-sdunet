@@ -1,0 +1,27 @@
+#!/bin/sh /etc/rc.common
+START=99
+run_sdu_ip6()
+{
+    local enable
+    config_get_bool enable $1 enable
+    
+    if [ $enable ]; then
+        local ipv6gateway
+
+        config_get ipv6gateway $1 ipv6gateway
+
+        route -A inet6 add default gw $ipv6gateway
+
+        echo "IPv6 Gateway Set."
+    fi
+}
+start()
+{
+    config_load sdunet
+    config_foreach run_sdu_ip6 login
+}
+
+stop()
+{
+
+}
