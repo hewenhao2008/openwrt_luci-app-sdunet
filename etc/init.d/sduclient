@@ -9,6 +9,7 @@ run_sdu_net()
     if [ $enable ]; then
         local username
         local password
+        local ipv6gateway
         
         config_get username $1 username
         config_get password $1 password
