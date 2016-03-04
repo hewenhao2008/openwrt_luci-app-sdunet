@@ -9,20 +9,32 @@ run_sdu_net()
     if [ $enable ]; then
         local username
         local password
-        local ipv6gateway
         
         config_get username $1 username
         config_get password $1 password
-        config_get ipv6gateway $1 ipv6gateway
 
         sed -e "s/_username_/$username/" /etc/config/sdu.conf.template > /etc/config/sdu.conf.tmp
         sed -e "s/_password_/$password/" /etc/config/sdu.conf.tmp > /etc/config/sdu.conf
 
         wpa_supplicant -D wired -i eth0 -c /etc/config/sdu.conf &
 
+        echo "SDU Network has started."
+    fi
+}
+
+run_sdu_ip6()
+{
+    local enable
+    config_get_bool enable $1 enable
+    
+    if [ $enable ]; then
+        local ipv6gateway
+
+        config_get ipv6gateway $1 ipv6gateway
+
         route -A inet6 add default gw $ipv6gateway
 
-        echo "SDU Network has started."
+        echo "IPv6 Gateway Set."
     fi
 }
 
@@ -30,6 +42,7 @@ start()
 {
     config_load sdunet
     config_foreach run_sdu_net login
+    config_foreach run_sdu_ip6 login
 }
 
 stop()
