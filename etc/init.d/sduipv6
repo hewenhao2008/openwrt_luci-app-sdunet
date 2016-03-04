@@ -16,13 +16,9 @@ run_sdu_ip6()
         echo "IPv6 Gateway Set."
     fi
 }
+
 start()
 {
     config_load sdunet
     config_foreach run_sdu_ip6 login
-}
-
-stop()
-{
-
 }
