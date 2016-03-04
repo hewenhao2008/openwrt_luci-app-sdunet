@@ -1,5 +1,6 @@
 #!/bin/sh /etc/rc.common
-START=99
+START=95
+
 run_sdu_ip6()
 {
     local enable
