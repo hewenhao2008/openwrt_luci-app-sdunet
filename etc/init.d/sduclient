@@ -26,7 +26,7 @@ start()
 {
     config_load sdunet
     config_foreach run_sdu_net login
-    /usr/local/sdu6
+    /usr/local/sdu6 start
 }
 
 stop()

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh /etc/rc.common
 
 sdu_ip6()
 {
@@ -12,7 +12,7 @@ sdu_ip6()
 
         route -A inet6 add default gw $ipv6gateway
 
-        echo "IPv6 Gateway Set."
+        echo "IPv6 Gateway Set to "$ipv6gateway"."
     fi
 }
 
@@ -29,14 +29,17 @@ test6()
     ping_code=${ping_code% packet*}
 
     if [ $ping_code=='0%' ]; then
-        echo 1
+        exit 1
     else
-        echo 0
+        exit 0
     fi
 }
 
-while [ !$(test6) ]; do
+start()
+{
+while [ $(test6)!='0' ]; do
     sleep 10
     echo 'Waiting for IPv6 connection.'
 done
 run_it
+}
