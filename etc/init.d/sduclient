@@ -1,5 +1,5 @@
 #!/bin/sh /etc/rc.common
-START=50
+START=70
 
 run_sdu_net()
 {
@@ -26,10 +26,12 @@ start()
 {
     config_load sdunet
     config_foreach run_sdu_net login
+    /usr/local/sdu6
 }
 
 stop()
 {
+    killall sdu6
     wpa_cli terminate
     echo "SDU Network has stoped."
 }

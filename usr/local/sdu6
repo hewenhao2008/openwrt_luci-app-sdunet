@@ -1,0 +1,42 @@
+#!/bin/sh
+
+sdu_ip6()
+{
+    local enable
+    config_get_bool enable $1 enable
+    
+    if [ $enable ]; then
+        local ipv6gateway
+
+        config_get ipv6gateway $1 ipv6gateway
+
+        route -A inet6 add default gw $ipv6gateway
+
+        echo "IPv6 Gateway Set."
+    fi
+}
+
+run_it()
+{
+    config_load sdunet
+    config_foreach sdu_ip6 login
+}
+
+test6()
+{
+    ping_code=`ping6 2001:da8::1 -c 3`
+    ping_code=${ping_code##*received, }
+    ping_code=${ping_code% packet*}
+
+    if [ $ping_code=='0%' ]; then
+        echo 1
+    else
+        echo 0
+    fi
+}
+
+while [ !$(test6) ]; do
+    sleep 10
+    echo 'Waiting for IPv6 connection.'
+done
+run_it
