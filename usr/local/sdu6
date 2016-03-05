@@ -29,17 +29,27 @@ test6()
     ping_code=${ping_code% packet*}
 
     if [ $ping_code=='0%' ]; then
-        exit 1
+        echo 'ok6'
     else
-        exit 0
+        echo 0
+    fi
+}
+
+run_loop()
+{
+    testcode=$(test6)
+    testcode=${testcode%6}
+
+    if [ $testcode == 'ok' ]; then
+        run_it
+    else
+        sleep 5
+        echo 'Waiting for IPv6 connection.'
+        run_loop
     fi
 }
 
 start()
 {
-while [ $(test6)!='0' ]; do
-    sleep 10
-    echo 'Waiting for IPv6 connection.'
-done
-run_it
+    run_loop
 }
