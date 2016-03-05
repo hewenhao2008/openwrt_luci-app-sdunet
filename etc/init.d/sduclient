@@ -26,12 +26,10 @@ start()
 {
     config_load sdunet
     config_foreach run_sdu_net login
-    /usr/local/sdu6 start
 }
 
 stop()
 {
-    killall sdu6
     wpa_cli terminate
     echo "SDU Network has stoped."
 }

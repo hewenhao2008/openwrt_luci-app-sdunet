@@ -1,4 +1,5 @@
 #!/bin/sh /etc/rc.common
+START=99
 
 sdu_ip6()
 {
@@ -16,7 +17,7 @@ sdu_ip6()
     fi
 }
 
-run_it()
+sdu_ipv6()
 {
     config_load sdunet
     config_foreach sdu_ip6 login
@@ -35,21 +36,21 @@ test6()
     fi
 }
 
-run_loop()
+sdu_loop()
 {
     testcode=$(test6)
     testcode=${testcode%6}
 
     if [ $testcode == 'ok' ]; then
-        run_it
+        sdu_ipv6
     else
         sleep 5
         echo 'Waiting for IPv6 connection.'
-        run_loop
+        sdu_loop
     fi
 }
 
 start()
 {
-    run_loop
+    sdu_loop
 }
