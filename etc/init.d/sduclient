@@ -15,6 +15,7 @@ run_sdu_net()
 
         sed -e "s/_username_/$username/" /etc/config/sdu.conf.template > /etc/config/sdu.conf.tmp
         sed -e "s/_password_/$password/" /etc/config/sdu.conf.tmp > /etc/config/sdu.conf
+        rm /etc/config/sdu.conf.tmp
 
         wpa_supplicant -D wired -i eth0 -c /etc/config/sdu.conf &
 
