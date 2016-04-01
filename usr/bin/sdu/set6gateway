@@ -1,0 +1,54 @@
+#!/bin/sh
+
+sdu_ipv6()
+{
+    local ipv6gateway=$1
+
+    route -A inet6 add default gw $ipv6gateway
+
+    echo "IPv6 Gateway Set to "$ipv6gateway"."
+}
+
+test6()
+{
+    ping_code=`ping6 2001:da8::1 -c 3`
+    if [ $ping_code=='connect: Permission denied' ]; then
+        echo 0
+    fi
+    ping_code=${ping_code##*received, }
+    ping_code=${ping_code% packet*}
+
+    if [ $ping_code=='0%' ]; then
+        echo 1
+    else
+        echo 0
+    fi
+}
+
+testnet()
+{
+    ps_code=`ps | grep wpa`
+    ps_code=${ps_code%grep*}
+    ps_code=${ps_code##*wpa}
+    ps_code=${ps_code%% *}
+#    echo $ps_code
+    if [ $ps_code=='_supplicant' ]; then
+        test6
+    fi
+    echo 0
+}
+
+sdu_loop()
+{
+    local testcode
+    testcode=$(testnet)
+    if [ $testcode == '1' ]; then
+        sdu_ipv6 $1
+    else
+        sleep 5
+        echo 'Waiting for IPv6 connection.'
+        sdu_loop $1
+    fi
+}
+date
+sdu_loop $1

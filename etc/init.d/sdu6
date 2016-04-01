@@ -10,47 +10,13 @@ sdu_ip6()
         local ipv6gateway
 
         config_get ipv6gateway $1 ipv6gateway
-
-        route -A inet6 add default gw $ipv6gateway
-
-        echo "IPv6 Gateway Set to "$ipv6gateway"."
-    fi
-}
-
-sdu_ipv6()
-{
-    config_load sdunet
-    config_foreach sdu_ip6 login
-}
-
-test6()
-{
-    ping_code=`ping6 2001:da8::1 -c 3`
-    ping_code=${ping_code##*received, }
-    ping_code=${ping_code% packet*}
-
-    if [ $ping_code=='0%' ]; then
-        echo 'ok6'
-    else
-        echo 0
-    fi
-}
-
-sdu_loop()
-{
-    testcode=$(test6)
-    testcode=${testcode%6}
-
-    if [ $testcode == 'ok' ]; then
-        sdu_ipv6
-    else
-        sleep 5
-        echo 'Waiting for IPv6 connection.'
-        sdu_loop
+        
+        /usr/bin/sdu/set6gateway $ipv6gateway >/var/log/sdu6
     fi
 }
 
 start()
 {
-    sdu_loop
+    config_load sdunet
+    config_foreach sdu_ip6 login
 }
